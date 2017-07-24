@@ -25,6 +25,8 @@ function PythonUnit(x, y, img) {
     this.x = x;
     this.y = y;
     this.img = img; // icon图标
+    this.direction = 2;
+    this.directionChange = [];
 }
 /**
  * 初始化

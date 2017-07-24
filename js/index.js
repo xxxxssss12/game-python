@@ -12,9 +12,13 @@ window.requestAnimFrame = (function(){                //浏览器的兼容设置
         };
 })();
 var i=0;
-var background = "#FFE4C4"
-var c=document.getElementById("myCanvas");
-var ctx=c.getContext("2d");
+var background = "#FFE4C4";
+var backgroudCanvas = document.getElementById("backgroudCanvas");
+var foodCanvas = document.getElementById("foodCanvas");
+var activeCanvas = document.getElementById("activeCanvas");
+var foodCtx = foodCanvas.getContext("2d");
+var backCtx = backgroudCanvas.getContext("2d");
+var activeCtx = activeCanvas.getContext("2d");
 var BACK_WIDTH = 960;   // 画布尺寸宽度
 var BACK_HEIGHT = 720;   // 画布尺寸高度
 var UNIT_WIDTH= 24; // 每个单元（图标）宽度
@@ -43,6 +47,10 @@ var DIRECTION = {
     left :{x:-1, y:0},
 };
 var CODE_DIRECTION_MAP = [];
+CODE_DIRECTION_MAP[0] = "left";
+CODE_DIRECTION_MAP[1] = "up";
+CODE_DIRECTION_MAP[2] = "right";
+CODE_DIRECTION_MAP[3] = "down";
 CODE_DIRECTION_MAP[269] = "up";
 CODE_DIRECTION_MAP[270] = "down";
 CODE_DIRECTION_MAP[271] = "left";
@@ -52,60 +60,130 @@ CODE_DIRECTION_MAP[272] = "right";
  * @type {{}}
  */
 var pythonList = [];    //贪吃蛇定义一个数组来维护
-var direction = 0;      //0-->往左；1-->往上；2-->往右；3-->往下
-var lastTime = Date.now();  //用来控制速度
+var directChangeLocation = [];
+var currentDirection = 2;      //0-->往左；1-->往上；2-->往右；3-->往下
+var lastTime = 0;  //用来控制速度
 var deltaTime = 0;
+var speed = 0.1;
 var python = new Python();
 var init = function() {
-    ctx.fillStyle=background;
-    ctx.fillRect(0,0,BACK_WIDTH,BACK_HEIGHT);
+    // 绘制北京
+    backCtx.fillStyle=background;
+    backCtx.fillRect(0,0,BACK_WIDTH,BACK_HEIGHT);
     python.init(3, 0, BACK_HEIGHT/2, P_FACE1, P_BODY, UNIT_WIDTH, UNIT_HEIGHT);
+    // 绘制蛇
+    activeCtx.drawImage(python.head.img, python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
     for (var i=0; i<python.bodyList.length; i++) {
-        ctx.drawImage(python.bodyList[i].img, python.bodyList[i].x, python.bodyList[i].y, UNIT_WIDTH, UNIT_HEIGHT);
+        activeCtx.drawImage(python.bodyList[i].img, python.bodyList[i].x, python.bodyList[i].y, UNIT_WIDTH, UNIT_HEIGHT);
     }
-    ctx.drawImage(python.head.img, python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
+    // 绘制食物
     for (var i=0; i<10; i++) {
         x = Math.random() * (BACK_WIDTH - UNIT_WIDTH);
         y = Math.random() * (BACK_HEIGHT - UNIT_HEIGHT);
         var foodIndex = parseInt(Math.random() * FOOD_LIST.length);
         if (foodIndex < FOOD_LIST.length) {
-            ctx.drawImage(FOOD_LIST[foodIndex].food, x, y, UNIT_WIDTH, UNIT_HEIGHT);
+            foodCtx.drawImage(FOOD_LIST[foodIndex].food, x, y, UNIT_WIDTH, UNIT_HEIGHT);
         }
     }
 }
 var refreshDeltaTime = function () {
+    if (!lastTime) lastTime = Date.now();
     var now = Date.now();
     deltaTime = now - lastTime;
     lastTime = now;
 };
+/**
+ * 检查是否需要改变方向，并校正坐标
+ * @param nowUnit
+ * @param beforeUnit
+ */
+function checkDirection(nowUnit, beforeUnit) {
+    var beforeDirection = beforeUnit.direction; // 头一节的方向
+
+}
+/**
+ * 方向改变事件
+ * @param beforeDirection
+ * @param afterDirection
+ */
+function onDirectChange(beforeDirection, afterDirection) {
+    // 记录需要进行移动的位置
+    for (var i=python.bodyList.length-1; i>=0; i--) {
+        var unit = python.bodyList[i];
+        unit.directionChange.push(new DirectionChange(beforeDirection, afterDirection, python.head.x, python.head.y));
+    }
+}
+function onMvPythonBody(unit, afterX, afterY) {
+    var directionChange = unit.directionChange[0];
+    if (!directionChange) return;
+    if (unit.direction == 0) {
+        //左
+        unit.directionChange.shift();
+
+    }
+}
+/**
+ * 移动贪吃蛇
+ */
+var mvPython = function (speed, deltaTime) {
+    // 先移动蛇头
+    if (currentDirection != python.head.direction) onDirectChange(python.head.direction, currentDirection);
+    python.head.direction = currentDirection;
+    var headMvInfo = DIRECTION[CODE_DIRECTION_MAP[currentDirection]];
+    activeCtx.clearRect(python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
+    python.head.x = python.head.x + headMvInfo.x * speed * deltaTime;
+    python.head.y = python.head.y + headMvInfo.y * speed * deltaTime;
+    activeCtx.drawImage(python.head.img, python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
+    // 再移动蛇身
+    for (var i=python.bodyList.length-1; i>=0; i--) {
+        var unit = python.bodyList[i];
+        activeCtx.clearRect(unit.x, unit.y, UNIT_WIDTH, UNIT_HEIGHT);
+        var bodyMvInfo = DIRECTION[CODE_DIRECTION_MAP[unit.direction]];
+        var afterX = unit.x + bodyMvInfo.x * speed * deltaTime;
+        var afterY = unit.y + bodyMvInfo.y * speed * deltaTime;
+        if (i == python.bodyList.length - 1) {
+            onMvPythonBody(unit, python.head, afterX, afterY);
+        } else {
+            onMvPythonBody(unit, python.bodyList[i+1], afterX, afterY);
+        }
+
+        unit.x = afterX
+        unit.y = afterY
+        activeCtx.drawImage(unit.img, unit.x, unit.y, UNIT_WIDTH, UNIT_HEIGHT);
+    }
+};
+function onPause() {
+    i=0;
+    lastTime = 0;
+    deltaTime = 0;
+}
 var i=0;
 function gameLoop() {
     if (startFlag) {
         refreshDeltaTime();
         if (i++ < 100) requestAnimationFrame(gameLoop);
-        else startFlag = !startFlag;
-        console.log(i + "...");
+        else {
+            startFlag = false;
+            onPause();
+        }
+        mvPython(speed, deltaTime);
+        console.log(i + "..." + deltaTime);
     }
 }
 var onKeyPress = function(code) {
     switch(code) {
         case 13 :
             // 开始/暂停
-            i=0;
             startFlag = !startFlag;
             if (startFlag) {
                 requestAnimationFrame(gameLoop);
+            } else {
+                onPause();
             }
-            break
-        case 269 :
-            // up
             break;
-        case 270 :
-            // down
-        case 271 :
-            // left
-        case 272 :
-            // right
+        default :
+            changeDirection(code);
+            break;
     }
 }
 

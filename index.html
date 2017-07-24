@@ -3,10 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>python</title>
+    <style>
+        #backgroudCanvas {
+            position: absolute;
+            left:0;
+            top:0;
+            width: 960px;
+            height: 720px;
+            background: #ffffff;
+            border: 2px solid #000000;
+            /*border-radius:50px;*/
+            z-index:-999
+        }
+
+        #activeCanvas {
+            position: absolute;
+            left:0;
+            top:0;
+            width: 960px;
+            height: 720px;
+            border: 2px solid #000000;
+            /*border-radius:50px;*/
+        }
+        #foodCanvas {
+            position: absolute;
+            left:0;
+            top:0;
+            width: 960px;
+            height: 720px;
+            border: 2px solid #000000;
+            /*border-radius:50px;*/
+        }
+    </style>
 </head>
 <body>
     <div id="div-canvas" style="display:block;">
-        <canvas id="myCanvas" width="960" height="720" ></canvas>
+        <canvas id="backgroudCanvas" width="960" height="720" ></canvas>
+        <canvas id="activeCanvas" width="960" height="720" ></canvas>
+        <canvas id="foodCanvas" width="960" height="720" ></canvas>
     </div>
     <img id="python_body" src="./img/python_body.png" style="display:none;" />
     <img id="python_face1" src="./img/python_face1.png" style="display:none;" />
@@ -20,6 +54,8 @@
     <img id="icon_pear" src="./img/pear.png" style="display:none;" />
     <script src="./js/jquery-3.2.1.js" ></script>
     <script src="./js/common.js"></script>
+    <script src="./js/directionChangeObj.js"></script>
+    <script src="./js/foodObj.js"></script>
     <script src="./js/pythonObj.js"></script>
     <script src="./js/index.js"></script>
 </body>
