@@ -67,7 +67,7 @@ var deltaTime = 0;
 var speed = 0.1;
 var python = new Python();
 var init = function() {
-    // 绘制北京
+    // 绘制背景
     backCtx.fillStyle=background;
     backCtx.fillRect(0,0,BACK_WIDTH,BACK_HEIGHT);
     python.init(3, 0, BACK_HEIGHT/2, P_FACE1, P_BODY, UNIT_WIDTH, UNIT_HEIGHT);
@@ -147,9 +147,20 @@ function onMvPythonBody(unit, afterX, afterY) {
     };
     if (isChangeDirection(directionChange, unit, afterX, afterY)) {
         directionChange = unit.directionChange.shift();
+        var delta = Math.abs(afterY - unit.y);
+        if (delta == 0) delta = Math.abs(afterX - unit.x);
+        var tmp = Math.abs(directionChange.x - unit.x);
+        if (tmp == 0) tmp = Math.abs(directionChange.y - unit.y);
         unit.x = directionChange.x;
         unit.y = directionChange.y;
         unit.direction = directionChange.afterDirection;
+        // 校正当前节的位置
+        if (delta - tmp != 0) {
+            var moveUnit = Math.abs(delta - tmp);
+            var mvInfo = DIRECTION[CODE_DIRECTION_MAP[unit.direction]];
+            unit.x = unit.x + moveUnit * mvInfo.x;
+            unit.y = unit.y + moveUnit * mvInfo.y;
+        }
     } else {
         unit.x = afterX;
         unit.y = afterY;
@@ -189,17 +200,13 @@ function onPause() {
     deltaTime = 0;
 }
 var i=0;
+/**
+ * 主循环
+ */
 function gameLoop() {
     if (startFlag) {
         refreshDeltaTime();
         requestAnimationFrame(gameLoop);
-        // if (i++ < 100) {
-        //     requestAnimationFrame(gameLoop);
-        // }
-        // else {
-        //     startFlag = false;
-        //     onPause();
-        // }
         mvPython(speed, deltaTime);
         // console.log(i + "..." + deltaTime);
     }
