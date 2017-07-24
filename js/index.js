@@ -51,10 +51,10 @@ CODE_DIRECTION_MAP[0] = "left";
 CODE_DIRECTION_MAP[1] = "up";
 CODE_DIRECTION_MAP[2] = "right";
 CODE_DIRECTION_MAP[3] = "down";
-CODE_DIRECTION_MAP[269] = "up";
-CODE_DIRECTION_MAP[270] = "down";
-CODE_DIRECTION_MAP[271] = "left";
-CODE_DIRECTION_MAP[272] = "right";
+CODE_DIRECTION_MAP[37] = "left";
+CODE_DIRECTION_MAP[38] = "up";
+CODE_DIRECTION_MAP[39] = "right";
+CODE_DIRECTION_MAP[40] = "down";
 /**
  * 定义贪吃蛇对象
  * @type {{}}
@@ -113,13 +113,46 @@ function onDirectChange(beforeDirection, afterDirection) {
         unit.directionChange.push(new DirectionChange(beforeDirection, afterDirection, python.head.x, python.head.y));
     }
 }
-function onMvPythonBody(unit, afterX, afterY) {
-    var directionChange = unit.directionChange[0];
-    if (!directionChange) return;
+function isChangeDirection(directionChange, unit, afterX, afterY) {
     if (unit.direction == 0) {
         //左
-        unit.directionChange.shift();
-
+        if (unit.x > directionChange.x && afterX <= directionChange.x) {
+            return true;
+        }
+    } else if (unit.direction == 1) {
+        //上
+        if (unit.y > directionChange.y && afterY <= directionChange.y) {
+            return true;
+        }
+    } else if (unit.direction == 2) {
+        //右
+        if (unit.x < directionChange.x && afterX >= directionChange.x) {
+            return true;
+        }
+    } else if (unit.direction == 3) {
+        //下
+        if (unit.y < directionChange.y && afterY >= directionChange.y) {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+function onMvPythonBody(unit, afterX, afterY) {
+    var directionChange = unit.directionChange[0];
+    if (!directionChange) {
+        unit.x = afterX;
+        unit.y = afterY;
+        return;
+    };
+    if (isChangeDirection(directionChange, unit, afterX, afterY)) {
+        directionChange = unit.directionChange.shift();
+        unit.x = directionChange.x;
+        unit.y = directionChange.y;
+        unit.direction = directionChange.afterDirection;
+    } else {
+        unit.x = afterX;
+        unit.y = afterY;
     }
 }
 /**
@@ -139,16 +172,14 @@ var mvPython = function (speed, deltaTime) {
         var unit = python.bodyList[i];
         activeCtx.clearRect(unit.x, unit.y, UNIT_WIDTH, UNIT_HEIGHT);
         var bodyMvInfo = DIRECTION[CODE_DIRECTION_MAP[unit.direction]];
+        if (!bodyMvInfo) alert(unit.direction);
         var afterX = unit.x + bodyMvInfo.x * speed * deltaTime;
         var afterY = unit.y + bodyMvInfo.y * speed * deltaTime;
         if (i == python.bodyList.length - 1) {
-            onMvPythonBody(unit, python.head, afterX, afterY);
+            onMvPythonBody(unit, afterX, afterY);
         } else {
-            onMvPythonBody(unit, python.bodyList[i+1], afterX, afterY);
+            onMvPythonBody(unit, afterX, afterY);
         }
-
-        unit.x = afterX
-        unit.y = afterY
         activeCtx.drawImage(unit.img, unit.x, unit.y, UNIT_WIDTH, UNIT_HEIGHT);
     }
 };
@@ -161,14 +192,20 @@ var i=0;
 function gameLoop() {
     if (startFlag) {
         refreshDeltaTime();
-        if (i++ < 100) requestAnimationFrame(gameLoop);
-        else {
-            startFlag = false;
-            onPause();
-        }
+        requestAnimationFrame(gameLoop);
+        // if (i++ < 100) {
+        //     requestAnimationFrame(gameLoop);
+        // }
+        // else {
+        //     startFlag = false;
+        //     onPause();
+        // }
         mvPython(speed, deltaTime);
-        console.log(i + "..." + deltaTime);
+        // console.log(i + "..." + deltaTime);
     }
+}
+function changeDirection(code) {
+    if (code >= 37 && code <= 40 && startFlag) currentDirection = code - 37;
 }
 var onKeyPress = function(code) {
     switch(code) {
