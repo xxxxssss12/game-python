@@ -205,7 +205,15 @@ function gameLoop() {
     }
 }
 function changeDirection(code) {
-    if (code >= 37 && code <= 40 && startFlag) currentDirection = code - 37;
+    var _direction = undefined;
+    if (code >= 37 && code <= 40 && startFlag) _direction = code - 37;
+    if (_direction != undefined) {
+        if (Math.abs(currentDirection - _direction) == 1
+            || Math.abs(currentDirection - _direction + 4) == 1
+            || Math.abs(currentDirection - _direction -4) == 1) {
+            currentDirection = _direction;
+        }
+    }
 }
 var onKeyPress = function(code) {
     switch(code) {
