@@ -22,7 +22,7 @@ var foodCtx = foodCanvas.getContext("2d");
 var backCtx = backgroudCanvas.getContext("2d");
 var activeCtx = activeCanvas.getContext("2d");
 var BACK_WIDTH = 960;   // 画布尺寸宽度
-var BACK_HEIGHT = 720;   // 画布尺寸高度
+var BACK_HEIGHT = 480;   // 画布尺寸高度
 var UNIT_WIDTH= 24; // 每个单元（图标）宽度
 var UNIT_HEIGHT= 24; // 每个单元（图标）高度
 var P_BODY = document.getElementById("python_body")
@@ -206,7 +206,7 @@ var checkTouch = function (foodPool, afterX, afterY, unitWidth, unitHeight) {
     return food;
 };
 function onScoreChange(score) {
-    if (score % 1000 == 0 && score != 0) speed += 0.1;
+    if (score % 1000 == 0 && score != 0 && score < 6000) speed += 0.05;
     $("#score").text(score);
 }
 /**
