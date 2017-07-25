@@ -20,13 +20,19 @@ function Python(head, bodyList) {
  * @param img
  * @constructor
  */
-function PythonUnit(x, y, img) {
+function PythonUnit(x, y, img, direction, directionChange) {
     // 绝对定位
     this.x = x;
     this.y = y;
     this.img = img; // icon图标
-    this.direction = 2;
-    this.directionChange = [];
+    if (direction != undefined)
+        this.direction = direction;
+    else
+        this.direction = 2;
+    if (directionChange != undefined)
+        this.directionChange = directionChange
+    else
+        this.directionChange = [];
 }
 /**
  * 初始化
