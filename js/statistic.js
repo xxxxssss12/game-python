@@ -27,7 +27,7 @@ var update = function(id, failTime, maxScore) {
             data: {"id": id, "failTime": failTime, maxScore:maxScore}
         })
     } else {
-        comeIn();
+        setTimeout("comeIn()", 2000);
     }
     setTimeout("update("+comeId+","+failCnt+","+score+")", 2000);
 }
