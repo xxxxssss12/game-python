@@ -38,7 +38,7 @@ var getMaxScore = function() {
         dataType: "json",
         success: function (ri) {
             if (ri && ri.code) {
-                changeId(ri.data);
+                $("#maxScore").html(ri.data);
             }
         }
     })

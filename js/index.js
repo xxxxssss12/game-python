@@ -233,11 +233,13 @@ function checkDead(python, BACK_WIDTH, BACK_HEIGHT, UNIT_WIDTH, UNIT_HEIGHT) {
  */
 var onDead = function () {
     startFlag = 0;
+    if (maxScore<score) maxScore = score;
     onPause();
     python.head.img = P_FACE_DEAD;
     activeCtx.clearRect(python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
     activeCtx.drawImage(python.head.img, python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
     failCnt++;
+
 };
 var mvPythonHead = function (python, afterX, afterY) {
     var food = checkTouch(foodPool, afterX, afterY, UNIT_WIDTH, UNIT_HEIGHT);
@@ -349,6 +351,7 @@ $(function() {
         onKeyPress(code);
     })
     comeIn();
+    getMaxScore();
 })
 /**
  * 主循环
