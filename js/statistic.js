@@ -26,10 +26,10 @@ var update = function(id, failTime, maxScore) {
             dataType: "json",
             data: {"id": id, "failTime": failTime, maxScore:maxScore}
         })
+        setTimeout("update("+comeId+","+failCnt+","+score+")", 2000);
     } else {
         setTimeout("comeIn()", 2000);
     }
-    setTimeout("update("+comeId+","+failCnt+","+score+")", 2000);
 }
 var getMaxScore = function() {
     $.ajax({

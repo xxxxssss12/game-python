@@ -266,10 +266,11 @@ var mvPythonHead = function (python, afterX, afterY) {
     if (isDead) {
         deadFlag = true;
         onDead();
+    } else {
+        // mv
+        python.head.x = afterX;
+        python.head.y = afterY;
     }
-    // mv
-    python.head.x = afterX;
-    python.head.y = afterY;
 };
 var createFood = function() {
     x = Math.random() * (BACK_WIDTH - UNIT_WIDTH);
