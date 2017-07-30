@@ -24,7 +24,7 @@ var update = function(id, failTime, maxScore) {
             url: $.baseURI + "/come/update",
             type: "post",
             dataType: "json",
-            data: {"id": id, "failTime": failTime}
+            data: {"id": id, "failTime": failTime, maxScore:maxScore}
         })
     } else {
         comeIn();
