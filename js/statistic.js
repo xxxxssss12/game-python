@@ -15,9 +15,9 @@ var comeIn = function() {
             }
         }
     });
-    setTimeout("update("+comeId+","+failCnt+")", 2000);
+    setTimeout("update("+comeId+","+failCnt+","+score+")", 2000);
 }
-var update = function(id, failTime) {
+var update = function(id, failTime, maxScore) {
     if (comeId) {
         $.ajax({
             url: $.baseURI + "/come/update",
@@ -28,5 +28,5 @@ var update = function(id, failTime) {
     } else {
         comeIn();
     }
-    setTimeout("update("+comeId+","+failCnt+")", 2000);
+    setTimeout("update("+comeId+","+failCnt+","+score+")", 2000);
 }
