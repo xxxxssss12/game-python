@@ -237,6 +237,7 @@ var onDead = function () {
     python.head.img = P_FACE_DEAD;
     activeCtx.clearRect(python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
     activeCtx.drawImage(python.head.img, python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
+    failCnt++;
 };
 var mvPythonHead = function (python, afterX, afterY) {
     var food = checkTouch(foodPool, afterX, afterY, UNIT_WIDTH, UNIT_HEIGHT);
@@ -291,6 +292,7 @@ var mvPython = function (speed, deltaTime) {
     var afterY = python.head.y + headMvInfo.y * mvDistance;
     mvPythonHead(python, afterX, afterY);
     activeCtx.drawImage(python.head.img, python.head.x, python.head.y, UNIT_WIDTH, UNIT_HEIGHT);
+    if (deadFlag) return;
     // 再移动蛇身
     for (var i=python.bodyList.length-1; i>=0; i--) {
         // console.log("mv蛇身..index=" + i);
@@ -346,6 +348,7 @@ $(function() {
         var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
         onKeyPress(code);
     })
+    comeIn();
 })
 /**
  * 主循环
