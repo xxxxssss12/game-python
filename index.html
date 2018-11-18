@@ -42,11 +42,16 @@
     <div style="float: right"><a href="https://github.com/xxxxssss12/game-python">go github</a></div>
     <div style="float: right">系统中最高分数:<label id="maxScore">0</label>&nbsp;&nbsp;</div>
 </div>
+    <!-- 画布 -->
     <div id="div-canvas" style="display:block;">
+        <!-- 背景 -->
         <canvas id="backgroudCanvas" width="960" height="480" ></canvas>
+        <!-- 蛇 -->
         <canvas id="activeCanvas" width="960" height="480" ></canvas>
+        <!-- 食物 -->
         <canvas id="foodCanvas" width="960" height="480" ></canvas>
     </div>
+    <!-- 静态图片资源 -->
     <img id="python_body" src="./img/python_body.png" style="display:none;" />
     <img id="python_face1" src="./img/python_face1.png" style="display:none;" />
     <img id="python_face2" src="./img/python_face2.png" style="display:none;" />
@@ -57,6 +62,7 @@
     <img id="icon_strawberry" src="./img/strawberry.png" style="display:none;" />
     <img id="icon_banana" src="./img/banana.png" style="display:none;" />
     <img id="icon_pear" src="./img/pear.png" style="display:none;" />
+    <!-- js依赖 -->
     <script src="./js/jquery-3.2.1.min.js" ></script>
     <script src="./js/statistic.js"></script>
     <script src="./js/common.js"></script>
